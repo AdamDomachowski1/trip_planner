@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Trip Map</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header id="toolbar">
+    <input id="trip-title" type="text" placeholder="Trip title" spellcheck="false">
+    <button id="edit-mode" title="Enable editing: add, drag and connect points">Edit</button>
+    <div class="toolbar-group edit-only">
+      <input id="coord-input" type="text" placeholder="lat, lon" size="12" spellcheck="false">
+      <button id="add-coord" title="Add a point from coordinates">Add</button>
+    </div>
+    <button id="connect-mode" class="edit-only" title="Click point A, then B to create an arrow">Connect</button>
+    <button id="calendar-btn" title="Calendar">📅</button>
+    <button id="budget-btn" title="Budget">💲</button>
+    <span class="spacer"></span>
+    <button id="export-btn">Export</button>
+    <button id="import-btn">Import</button>
+    <input id="import-file" type="file" accept=".json,application/json" hidden>
+    <button id="new-trip">New trip</button>
+  </header>
+
+  <main id="map-container"></main>
+
+  <aside id="note-panel" hidden>
+    <div class="panel-row">
+      <input id="point-label" type="text" placeholder="Point name" spellcheck="false">
+      <button id="close-panel" title="Close">×</button>
+    </div>
+    <div id="color-palette" class="panel-row"></div>
+    <div class="panel-row" id="label-pos-row">
+      <label for="label-pos">Label:</label>
+      <select id="label-pos">
+        <option value="auto">automatic</option>
+        <option value="right">right</option>
+        <option value="left">left</option>
+        <option value="top">above</option>
+        <option value="bottom">below</option>
+      </select>
+    </div>
+    <div class="panel-row">
+      <button id="toggle-preview">Preview</button>
+      <button id="delete-point" class="danger">Delete point</button>
+    </div>
+    <textarea id="note-text" placeholder="Note (markdown)…" spellcheck="false"></textarea>
+    <div id="note-preview" hidden></div>
+  </aside>
+
+  <div id="calendar-popover" hidden>
+    <div class="cal-header">
+      <button id="cal-prev" title="Previous month">‹</button>
+      <span id="cal-title"></span>
+      <button id="cal-next" title="Next month">›</button>
+    </div>
+    <div id="cal-grid"></div>
+  </div>
+
+  <div id="budget-popover" hidden>
+    <div class="budget-head">
+      <span>Name</span><span>Amount</span><span></span>
+    </div>
+    <div id="budget-rows"></div>
+    <div class="budget-total">Total: <span id="budget-sum">0</span></div>
+  </div>
+
+  <div id="status-bar"></div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
