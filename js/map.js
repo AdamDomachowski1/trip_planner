@@ -3,7 +3,7 @@
 // Points and links are drawn by other modules in screen coordinates
 // (untransformed groups), so they do not scale with the map.
 
-import { geoNaturalEarth1, geoPath } from 'https://cdn.jsdelivr.net/npm/d3-geo@3/+esm';
+import { geoMercator, geoPath } from 'https://cdn.jsdelivr.net/npm/d3-geo@3/+esm';
 import { select } from 'https://cdn.jsdelivr.net/npm/d3-selection@3/+esm';
 import { zoom, zoomIdentity } from 'https://cdn.jsdelivr.net/npm/d3-zoom@3/+esm';
 import { feature } from 'https://cdn.jsdelivr.net/npm/topojson-client@3/+esm';
@@ -43,7 +43,11 @@ export async function initMap(container) {
   });
   const countries = feature(topo, topo.objects.countries);
 
-  map.projection = geoNaturalEarth1().fitSize([map.width, map.height], countries);
+  // Mercator: conformal, so country shapes are not stretched sideways.
+  // Fitted to a lat range instead of the whole feature set — Mercator sends
+  // the poles to infinity, and Antarctica would blow the bounds up.
+  const fitBounds = { type: 'MultiPoint', coordinates: [[-180, 82], [180, -58]] };
+  map.projection = geoMercator().fitSize([map.width, map.height], fitBounds);
   const path = geoPath(map.projection);
 
   map.svg = select(container).append('svg')
