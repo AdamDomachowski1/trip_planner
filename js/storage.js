@@ -37,13 +37,34 @@ function validate(data) {
     && Array.isArray(data.links);
 }
 
-export function exportJSON() {
-  const blob = new Blob([JSON.stringify(state.data, null, 2)], { type: 'application/json' });
+export async function exportJSON() {
+  const json = JSON.stringify(state.data, null, 2);
+  const name = (state.data.trip.title || 'trip').replace(/[^\p{L}\p{N}_-]+/gu, '_');
+  const fileName = `${name}.json`;
+
+  // where supported, let the user pick the folder and file name
+  if (window.showSaveFilePicker) {
+    try {
+      const handle = await window.showSaveFilePicker({
+        suggestedName: fileName,
+        types: [{ description: 'Trip file', accept: { 'application/json': ['.json'] } }],
+      });
+      const writable = await handle.createWritable();
+      await writable.write(json);
+      await writable.close();
+      return;
+    } catch (e) {
+      if (e.name === 'AbortError') return; // the user cancelled the dialog
+      console.error('Save dialog failed, falling back to download', e);
+    }
+  }
+
+  // fallback (Firefox, older browsers): straight download to the default folder
+  const blob = new Blob([json], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  const name = (state.data.trip.title || 'trip').replace(/[^\p{L}\p{N}_-]+/gu, '_');
   a.href = url;
-  a.download = `${name}.json`;
+  a.download = fileName;
   a.click();
   URL.revokeObjectURL(url);
 }
